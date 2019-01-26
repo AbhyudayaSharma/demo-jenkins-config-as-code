@@ -9,7 +9,7 @@ boolean createAdmin = Boolean.getBoolean("io.jenkins.dev.security.createAdmin")
 
 println("=== Configuring users")
 def securityRealm = Jenkins.instance.getSecurityRealm()
-for (int i = 0; i < 500; i++) {
+for (int i = 0; i < 100; i++) {
     String userName = "user" + i;
     User user = securityRealm.createAccount(userName, "user")
     user.setFullName(userName.toUpperCase(Locale.US))

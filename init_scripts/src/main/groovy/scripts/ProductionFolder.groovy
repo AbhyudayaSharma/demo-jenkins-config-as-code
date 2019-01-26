@@ -4,7 +4,6 @@ import com.cloudbees.hudson.plugins.folder.Folder
 import com.michelin.cio.hudson.plugins.rolestrategy.RoleBasedAuthorizationStrategy
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription
 import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerHelper
-import hudson.model.Cause
 import hudson.plugins.git.GitSCM
 import jenkins.model.Jenkins
 import jenkins.plugins.git.GitSCMSource
@@ -44,7 +43,7 @@ project2.setDefinition(new CpsFlowDefinition("buildPlugin(platforms: ['master'],
 JobOwnerHelper.setOwnership(project2, new OwnershipDescription(true, "admin", Arrays.asList("user")))
 
 // Sample project with a build flow from SCM
-for (int i = 0; i < 800; i++) {
+for (int i = 0; i < 500; i++) {
     def myFolder = Jenkins.getInstance().createProject(Folder.class, "Folder" + i)
     WorkflowJob project4 = myFolder.createProject(WorkflowJob.class, "test" + i)
     GitSCM source1 = new GitSCM("https://gist.github.com/AbhyudayaSharma/1bccbb2e760ca0706907f451347d5727.git")
@@ -55,12 +54,6 @@ WorkflowJob project3 = folder.createProject(WorkflowJob.class, "Remoting")
 GitSCM source = new GitSCM("https://github.com/jenkinsci/remoting.git")
 project3.setDefinition(new CpsScmFlowDefinition(source, "Jenkinsfile"))
 JobOwnerHelper.setOwnership(project3, new OwnershipDescription(true, "admin", Arrays.asList("user")))
-project3.scheduleBuild(new Cause() {
-    @Override
-    String getShortDescription() {
-        return "I have started this build."
-    }
-})
 
 WorkflowJob project4 = folder.createProject(WorkflowJob.class, "test")
 GitSCM source1 = new GitSCM("https://gist.github.com/AbhyudayaSharma/1bccbb2e760ca0706907f451347d5727.git")
@@ -69,13 +62,18 @@ JobOwnerHelper.setOwnership(project3, new OwnershipDescription(true, "admin", Ar
 
 RoleBasedAuthorizationStrategy strategy = RoleBasedAuthorizationStrategy.getInstance()
 def rand = new Random()
-for (int i = 0; i < 50; i++) {
+for (int i = 0; i < 500; i++) {
     def roleName = "myRole" + i
-    def userName = "user" + new Random().nextInt(50)
+    def userName = "user" + i
+//    def userName = "user" + new Random().nextInt(50) // todo
     if (rand.nextBoolean()) {
-        strategy.doAddRole(RoleBasedAuthorizationStrategy.PROJECT, roleName, "hudson.model.Item.Discover,hudson.model.Item.Read", "true", "t[a-zA-Z]+\\d{2,2}\$")
+//        strategy.doAddRole(RoleBasedAuthorizationStrategy.PROJECT, roleName, "hudson.model.Item.Discover,hudson.model.Item.Read", "true", "folder" + i)
+        strategy.doAddRole(RoleBasedAuthorizationStrategy.PROJECT, roleName, "hudson.model.Item.Discover,hudson.model.Item.Read", "true", ".*")
+//        strategy.doAddRole(RoleBasedAuthorizationStrategy.PROJECT, roleName, "hudson.model.Item.Discover,hudson.model.Item.Read", "true", "t[a-zA-Z]+\\d{2,2}\$")
     } else {
-        strategy.doAddRole(RoleBasedAuthorizationStrategy.PROJECT, roleName, "", "true", "t[a-zA-Z]+\\d{2,3}\$")
+//        strategy.doAddRole(RoleBasedAuthorizationStrategy.PROJECT, roleName, "", "true", "folder" + i)
+        strategy.doAddRole(RoleBasedAuthorizationStrategy.PROJECT, roleName, "", "true", ".*")
+//        strategy.doAddRole(RoleBasedAuthorizationStrategy.PROJECT, roleName, "", "true", "t[a-zA-Z]+\\d{2,3}\$")
     }
     strategy.doAssignRole(RoleBasedAuthorizationStrategy.PROJECT, roleName, userName)
 }
