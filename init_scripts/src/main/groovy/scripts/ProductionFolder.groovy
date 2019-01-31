@@ -44,7 +44,7 @@ JobOwnerHelper.setOwnership(project2, new OwnershipDescription(true, "admin", Ar
 
 // Sample project with a build flow from SCM
 for (int i = 0; i < 500; i++) {
-    def myFolder = Jenkins.getInstance().createProject(Folder.class, "Folder" + i)
+    def myFolder = Jenkins.getInstance().createProject(Folder.class, "Fooooooooooooooolder" + i)
     WorkflowJob project4 = myFolder.createProject(WorkflowJob.class, "test" + i)
     GitSCM source1 = new GitSCM("https://gist.github.com/AbhyudayaSharma/1bccbb2e760ca0706907f451347d5727.git")
     project4.setDefinition(new CpsScmFlowDefinition(source1, "Jenkinsfile"))
@@ -65,15 +65,15 @@ def rand = new Random()
 for (int i = 0; i < 500; i++) {
     def roleName = "myRole" + i
     def userName = "user" + i
-//    def userName = "user" + new Random().nextInt(50) // todo
     if (rand.nextBoolean()) {
-//        strategy.doAddRole(RoleBasedAuthorizationStrategy.PROJECT, roleName, "hudson.model.Item.Discover,hudson.model.Item.Read", "true", "folder" + i)
-        strategy.doAddRole(RoleBasedAuthorizationStrategy.PROJECT, roleName, "hudson.model.Item.Discover,hudson.model.Item.Read", "true", ".*")
-//        strategy.doAddRole(RoleBasedAuthorizationStrategy.PROJECT, roleName, "hudson.model.Item.Discover,hudson.model.Item.Read", "true", "t[a-zA-Z]+\\d{2,2}\$")
+        strategy.doAddRole(RoleBasedAuthorizationStrategy.PROJECT, roleName,
+                "hudson.model.Item.Discover,hudson.model.Item.Read,hudson.model.Item.Build",
+                "true", "(oo|oob?)*.*[" + rand.nextInt(10) + rand.nextInt(10) + "]*")
     } else {
-//        strategy.doAddRole(RoleBasedAuthorizationStrategy.PROJECT, roleName, "", "true", "folder" + i)
-        strategy.doAddRole(RoleBasedAuthorizationStrategy.PROJECT, roleName, "", "true", ".*")
-//        strategy.doAddRole(RoleBasedAuthorizationStrategy.PROJECT, roleName, "", "true", "t[a-zA-Z]+\\d{2,3}\$")
+        strategy.doAddRole(RoleBasedAuthorizationStrategy.PROJECT, roleName,
+                "hudson.model.Item.Discover,hudson.model.Item.Build,hudson.model.Item.Cancel",
+                "true", "(((?=Folder)(?=([a-zA-Z]+)*)(?=Folder)(Folder))+)+["
+                + rand.nextInt(10) + rand.nextInt(10) + "]*")
     }
     strategy.doAssignRole(RoleBasedAuthorizationStrategy.PROJECT, roleName, userName)
 }
